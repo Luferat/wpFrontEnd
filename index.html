@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wpFrontEnd</title>
+</head>
+
+<body>
+
+    <div id="wrap">
+
+        <header>
+            <h1>wpFrontEnd</h1>
+        </header>
+        <hr>
+        <nav>
+            <a href="index.html">Inicio</a>
+        </nav>
+        <hr>
+        <main id="main"></main>
+        <hr>
+        <footer>&copy; Copyright 2023 Eu Mesmo!</footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script>
+
+        // Usando o Axios como cliente HTTP → https://github.com/axios/axios
+        // Na URL da API, '?_embed' obtém a imagem do post e outras informações extras no mesmo response.
+        // Veja documentação da API → https://developer.wordpress.org/rest-api/using-the-rest-api/
+        axios.get('http://wp.localhost/wp-json/wp/v2/posts?_embed')
+
+            // O Axios executa "promises" para obter os dados.
+            .then((response) => {
+
+                // 'response' pussui todos os posts.
+                // console.log(response.data);
+
+                // Inicializa uma variável para a view.
+                let out = '<h2>Novos artigos</h2>';
+
+                // Loop para obter cada post.
+                response.data.forEach((post) => {
+
+                    // 'post' possui todos os dados do post atual.
+                    console.log(post);
+
+                    // Adicionando o post atual na variável da view.
+                    out += `
+<div>
+    <img src="${post._embedded['wp:featuredmedia'][0].source_url}" alt="${post.title.rendered}">
+    <h3><a href="view.html?p=${post.id}">${post.title.rendered}</a></h3>
+    ${post.excerpt.rendered}
+    <p><small>Por ${post._embedded.author[0].name} em ${post.date}.</small></p>
+</div>
+                    `;
+                });
+
+                // Exibindo a variável na view, no elemento '#main' → <main id="main"></main>.
+                main.innerHTML = out;
+
+            })
+
+    </script>
+
+</body>
+
+</html>
